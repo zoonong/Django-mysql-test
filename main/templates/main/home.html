@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<br>
+    <h2>게시글 목록</h2>
+    <hr>
+    <div>
+        {% for post in posts %}
+        <div class="wrapper" style="border: 1px solid blue; width: 400px;">
+            <div style="text-align: center;">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'mypage' post.writer.id %}">{{post.writer}}</a><br>
+                {% else %}
+                    {{post.writer}}<br>
+                {% endif %}
+                {{post.pub_date}}
+                <div class="wrapper" style="border: 1px solid black;">
+                    {% if post.image %}
+                        <p><img src="{{post.image.url}}" alt="사진" width="300" height="300"></p>
+                    {% endif %}
+                </div>
+                {{post.text}}<br>
+                <a href="{% url 'detail' post.id %}">...자세히</a>
+                <br><hr>
+            </div>
+            {% if user.is_authenticated %}
+                <!-- <div style="margin-left: 50px;">
+                    <form action="{%url 'create_comment' post.id%}" method="POST">
+                        {%csrf_token%}
+                        <textarea name="content" placeholder="댓글내용입력" style="width: 300px;"></textarea><br>
+                        <input type="submit" value="확인">
+                    </form>
+                </div> -->
+            {% else %}
+                로그인 후 댓글 작성 가능합니다.
+            {% endif %}
+
+        </div>
+        <br>
+        {%endfor%}
+    </div>
+    
+{% endblock %}

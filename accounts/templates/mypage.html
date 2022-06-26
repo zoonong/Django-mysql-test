@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<br>
+{% if user.is_authenticated %}
+    
+    <h3>
+        {% if 'user' in user.username and user.username != 'user' %}
+            {{ user.username }}
+        {% else %}
+            {{ user.username }}
+        {% endif %}
+    </h3>
+    {% if request.user != user %}<!--다른 사람의 프로필에 들어온 경우에만 팔로우/언팔로우 버튼이보임-->
+        {% if request.user.profile in user.profile.followers.all %}
+            <a href="{%url 'follow' user.id %}"><button type="button" class="btn btn-outline-info">언팔로우</button></a>
+        {% else %}
+            <a href="{%url 'follow' user.id %}"><button type="button" class="btn btn-info">팔로우</button></a>
+        {% endif %}
+    {% endif %}
+    <hr>
+    <div class="container">
+        <h3>팔로워 : {{user.profile.followers.count}} 명</h3>
+        {%for follower in user.profile.followers.all %}
+            <a href="{% url 'mypage' follower.user.id %}">{{follower.user.username}}</a>&emsp;
+        {% endfor %}
+        <br>
+        <h3>팔로잉 : {{user.profile.followings.count}} 명</h3>
+        {% for following in user.profile.followings.all %}
+            <a href="{%url 'mypage' following.user.id%}">{{following.user.username}}</a>
+        {% endfor %}
+        </div>
+    <hr>
+    <div>
+        {% for post in posts %}
+        <div class="wrapper" style="border: 1px solid blue; width: 400px;">
+            <div style="text-align: center;">
+                
+                {{post.pub_date}}
+                <div class="wrapper" style="border: 1px solid black;">
+                    {% if post.image %}
+                        <p><img src="{{post.image.url}}" alt="사진" width="300" height="300"></p>
+                    {% endif %}
+                </div>
+                {{post.text}}<br>
+                <a href="{% url 'detail' post.id %}">...자세히</a>
+                <br><hr>
+            </div>
+            
+
+        </div>
+        <br>
+        {%endfor%}
+    </div>
+{% else %}
+    <h3>로그인 후 이용해 주세요.</h3>
+{% endif %}
+    
+{% endblock %}
